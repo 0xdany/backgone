@@ -1,0 +1,29 @@
+{
+  "name": "backgone",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "tailwindcss build -i ./public/styles/tailwind.css -o ./public/styles/output.css",
+    "watch:css": "tailwindcss -i ./public/styles/tailwind.css -o ./public/styles/output.css --watch",
+    "start": "node server.js",
+    "serve": "browser-sync start --config bs-config.js",
+    "dev": "concurrently \"npm run watch:css\" \"npm run start\" \"npm run serve\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "htmx.org": "^1.9.12"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "browser-sync": "^3.0.2",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.4",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.4"
+  }
+}
