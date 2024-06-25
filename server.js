@@ -22,6 +22,20 @@ app.use('/processed', express.static(path.join(__dirname, 'processed')));
 // Set the view engine to EJS
 app.set('view engine', 'ejs');
 
+// Function to delete all files in a directory except .gitkeep
+const deleteFilesInDirectory = (directory) => {
+  fs.readdir(directory, (err, files) => {
+    if (err) throw err;
+    for (const file of files) {
+      if (file !== '.gitkeep') {
+        fs.unlink(path.join(directory, file), err => {
+          if (err) throw err;
+        });
+      }
+    }
+  });
+};
+
 // Define a simple route
 app.get('/', (req, res) => {
   res.render('index');
@@ -30,6 +44,9 @@ app.get('/', (req, res) => {
 // Handle file uploads and background removal
 app.post('/upload', upload.single('image'), (req, res) => {
   console.log('File uploaded:', req.file); // Log file upload
+  
+  deleteFilesInDirectory('processed');
+
   const inputPath = req.file.path;
   const outputPath = path.join(__dirname, 'processed', `${req.file.filename}.png`);
 
@@ -48,6 +65,10 @@ app.post('/upload', upload.single('image'), (req, res) => {
     if (code !== 0) {
       return res.status(500).send('Error processing image');
     }
+
+    // Delete existing files in uploads and processed directories after processing
+    deleteFilesInDirectory('uploads');
+    
 
     res.json({ imageUrl: `/processed/${req.file.filename}.png` });
   });
