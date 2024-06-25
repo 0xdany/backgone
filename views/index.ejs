@@ -1,16 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My HTMX Project</title>
-    <link href="/styles/output.css" rel="stylesheet" />
-    <script src="/node_modules/htmx.org/dist/htmx.min.js"></script>
-  </head>
-  <body class="bg-gray-100 text-center">
-    <h1 class="text-4xl font-bold bg-red-200 text-blue-600 mt-10">Welcome to My HTMX Project</h1>
-    <div id="content" class="mt-10">
-      <button hx-get="/message" hx-target="#content" hx-swap="innerHTML" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Click Me</button>
-    </div>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Background Remover App</title>
+  <link href="/styles/output.css" rel="stylesheet">
+  <script src="/node_modules/htmx.org/dist/htmx.min.js"></script>
+  <style>
+    .dropzone {
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-center">
+  <h1 class="text-4xl font-bold text-blue-600 mt-10">Background Remover App</h1>
+  <div id="dropzone" class="dropzone mt-10" hx-post="/upload" hx-encoding="multipart/form-data" hx-trigger="drop" hx-target="#result">
+    Drag and drop an image here or click to upload
+    <input type="file" name="image" style="display: none;">
+  </div>
+  <div id="result" class="mt-10"></div>
+  <script>
+    document.getElementById('dropzone').addEventListener('click', function() {
+      this.querySelector('input[type="file"]').click();
+    });
+
+    document.getElementById('dropzone').addEventListener('change', function(event) {
+      const fileInput = event.target;
+      const formData = new FormData();
+      formData.append('image', fileInput.files[0]);
+
+      fetch('/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('result').innerHTML = `<img src="${data.imageUrl}" alt="Processed Image">`;
+      })
+      .catch(error => console.error('Error:', error));
+    });
+
+    document.getElementById('dropzone').addEventListener('drop', function(event) {
+      event.preventDefault();
+      const files = event.dataTransfer.files;
+      if (files.length > 0) {
+        const formData = new FormData();
+        formData.append('image', files[0]);
+
+        fetch('/upload', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('result').innerHTML = `<img src="${data.imageUrl}" alt="Processed Image">`;
+        })
+        .catch(error => console.error('Error:', error));
+      }
+    });
+  </script>
+</body>
 </html>
