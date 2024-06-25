@@ -43,9 +43,14 @@ app.get('/', (req, res) => {
 
 // Handle file uploads and background removal
 app.post('/upload', upload.single('image'), (req, res) => {
-  console.log('File uploaded:', req.file); // Log file upload
-  
+  if (!req.file) {
+    return res.status(400).send('No file uploaded.');
+  }
+
   deleteFilesInDirectory('processed');
+
+
+  console.log('File uploaded:', req.file);
 
   const inputPath = req.file.path;
   const outputPath = path.join(__dirname, 'processed', `${req.file.filename}.png`);
@@ -69,7 +74,6 @@ app.post('/upload', upload.single('image'), (req, res) => {
     // Delete existing files in uploads and processed directories after processing
     deleteFilesInDirectory('uploads');
     
-
     res.json({ imageUrl: `/processed/${req.file.filename}.png` });
   });
 });
