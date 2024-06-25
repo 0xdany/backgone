@@ -305,5 +305,9 @@ models/u2net.onnx
 models/
 
 
+
+# Ignore all files in the uploads and processed directories, but keep the directories themselves
 uploads/*
 processed/*
+!uploads/.gitkeep
+!processed/.gitkeep
