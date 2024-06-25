@@ -33,7 +33,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
   const inputPath = req.file.path;
   const outputPath = path.join(__dirname, 'processed', `${req.file.filename}.png`);
 
-  const pythonProcess = spawn(path.join(__dirname, 'backgone_venv/bin/python3'), ['process_image.py', inputPath, outputPath]);
+  const pythonProcess = spawn('python3', ['process_image.py', inputPath, outputPath]);
 
   pythonProcess.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`);
