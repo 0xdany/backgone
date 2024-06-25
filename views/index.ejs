@@ -25,7 +25,9 @@
       <input type="file" name="image" style="display: none" />
     </div>
 
-    <div id="result" class="mt-10"></div>
+    <div class="w-full flex justify-center items-center max-h-72 bg-red-600">
+      <div id="result" class="mt-10 "></div>
+    </div>
 
     <script>
       document.getElementById("dropzone").addEventListener("click", function () {
@@ -37,15 +39,24 @@
         const formData = new FormData();
         formData.append("image", fileInput.files[0]);
 
+        document.getElementById("result").innerHTML = "<p>Processing...</p>";
+
         fetch("/upload", {
           method: "POST",
           body: formData,
         })
           .then((response) => response.json())
           .then((data) => {
-            document.getElementById("result").innerHTML = `<img src="${data.imageUrl}" alt="Processed Image">`;
+            document.getElementById("result").innerHTML = `
+              <img src="${data.imageUrl}" alt="Processed Image" class="max-h-80">
+              <br>
+              <a href="${data.imageUrl}" download="processed.png" class="mt-2 inline-block bg-blue-500 text-white px-4 py-2 rounded">Download</a>
+            `;
           })
-          .catch((error) => console.error("Error:", error));
+          .catch((error) => {
+            console.error("Error:", error);
+            document.getElementById("result").innerHTML = "<p>Error processing image. Please try again.</p>";
+          });
       });
 
       document.getElementById("dropzone").addEventListener("drop", function (event) {
@@ -55,18 +66,26 @@
           const formData = new FormData();
           formData.append("image", files[0]);
 
+          document.getElementById("result").innerHTML = "<p>Processing...</p>";
+
           fetch("/upload", {
             method: "POST",
             body: formData,
           })
             .then((response) => response.json())
             .then((data) => {
-              document.getElementById("result").innerHTML = `<img src="${data.imageUrl}" alt="Processed Image">`;
+              document.getElementById("result").innerHTML = `
+                <img src="${data.imageUrl}" alt="Processed Image" class="mt-4">
+                <br>
+                <a href="${data.imageUrl}" download="processed.png" class="mt-2 inline-block bg-blue-500 text-white px-4 py-2 rounded">Download</a>
+              `;
             })
-            .catch((error) => console.error("Error:", error));
+            .catch((error) => {
+              console.error("Error:", error);
+              document.getElementById("result").innerHTML = "<p>Error processing image. Please try again.</p>";
+            });
         }
       });
     </script>
-    
   </body>
 </html>
