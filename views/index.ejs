@@ -14,6 +14,9 @@
         text-align: center;
         cursor: pointer;
       }
+      .dropzone.dragover {
+        border-color: #000;
+      }
     </style>
   </head>
 
@@ -25,16 +28,18 @@
       <input type="file" name="image" style="display: none" />
     </div>
 
-    <div class="w-full flex justify-center items-center max-h-72 bg-red-600">
+    <div class="w-full flex justify-center items-center">
       <div id="result" class="mt-10 "></div>
     </div>
 
     <script>
-      document.getElementById("dropzone").addEventListener("click", function () {
+      const dropzone = document.getElementById("dropzone");
+
+      dropzone.addEventListener("click", function () {
         this.querySelector('input[type="file"]').click();
       });
 
-      document.getElementById("dropzone").addEventListener("change", function (event) {
+      dropzone.addEventListener("change", function (event) {
         const fileInput = event.target;
         const formData = new FormData();
         formData.append("image", fileInput.files[0]);
@@ -59,8 +64,18 @@
           });
       });
 
-      document.getElementById("dropzone").addEventListener("drop", function (event) {
+      dropzone.addEventListener("dragover", function (event) {
         event.preventDefault();
+        dropzone.classList.add("dragover");
+      });
+
+      dropzone.addEventListener("dragleave", function () {
+        dropzone.classList.remove("dragover");
+      });
+
+      dropzone.addEventListener("drop", function (event) {
+        event.preventDefault();
+        dropzone.classList.remove("dragover");
         const files = event.dataTransfer.files;
         if (files.length > 0) {
           const formData = new FormData();
@@ -75,7 +90,7 @@
             .then((response) => response.json())
             .then((data) => {
               document.getElementById("result").innerHTML = `
-                <img src="${data.imageUrl}" alt="Processed Image" class="mt-4">
+                <img src="${data.imageUrl}" alt="Processed Image" class="max-h-80">
                 <br>
                 <a href="${data.imageUrl}" download="processed.png" class="mt-2 inline-block bg-blue-500 text-white px-4 py-2 rounded">Download</a>
               `;
