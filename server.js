@@ -8,7 +8,16 @@ const app = express();
 const port = 3000;
 
 // Configure Multer for file uploads
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ 
+  dest: 'uploads/',
+  fileFilter: (req, file, cb) => {
+    const validTypes = ['image/jpeg'];
+    if (!validTypes.includes(file.mimetype)) {
+      return cb(new Error('Only .jpg and .jpeg files are allowed'), false);
+    }
+    cb(null, true);
+  }
+});
 
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -44,11 +53,10 @@ app.get('/', (req, res) => {
 // Handle file uploads and background removal
 app.post('/upload', upload.single('image'), (req, res) => {
   if (!req.file) {
-    return res.status(400).send('No file uploaded.');
+    return res.status(400).send('No file uploaded or invalid file type.');
   }
-
+  // Delete existing files in uploads and processed directories before processing
   deleteFilesInDirectory('processed');
-
 
   console.log('File uploaded:', req.file);
 
@@ -73,7 +81,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
 
     // Delete existing files in uploads and processed directories after processing
     deleteFilesInDirectory('uploads');
-    
+
     res.json({ imageUrl: `/processed/${req.file.filename}.png` });
   });
 });

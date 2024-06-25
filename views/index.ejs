@@ -29,11 +29,25 @@
     </div>
 
     <div class="w-full flex justify-center items-center">
-      <div id="result" class="mt-10 "></div>
+      <div id="result" class="mt-10"></div>
     </div>
 
     <script>
       const dropzone = document.getElementById("dropzone");
+      const validateFile = (file) => {
+        const validTypes = ["image/jpeg"];
+
+        document.getElementById("dropzone").classList.remove("bg-red-200");
+        document.getElementById("dropzone").innerText = "Drag and drop an image here or click to upload";
+
+        if (!validTypes.includes(file.type)) {
+          document.getElementById("dropzone").classList.add("bg-red-200");
+          document.getElementById("dropzone").innerText = "Only .jpg and .jpeg files are allowed. Please try again dude XD";
+          return false;
+        }
+
+        return true;
+      };
 
       dropzone.addEventListener("click", function () {
         this.querySelector('input[type="file"]').click();
@@ -41,8 +55,12 @@
 
       dropzone.addEventListener("change", function (event) {
         const fileInput = event.target;
+        const file = fileInput.files[0];
+
+        if (!validateFile(file)) return;
+
         const formData = new FormData();
-        formData.append("image", fileInput.files[0]);
+        formData.append("image", file);
 
         document.getElementById("result").innerHTML = "<p>Processing...</p>";
 
@@ -77,7 +95,8 @@
         event.preventDefault();
         dropzone.classList.remove("dragover");
         const files = event.dataTransfer.files;
-        if (files.length > 0) {
+
+        if (files.length > 0 && validateFile(files[0])) {
           const formData = new FormData();
           formData.append("image", files[0]);
 
