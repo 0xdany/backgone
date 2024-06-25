@@ -302,3 +302,4 @@ cython_debug/
 # model
 .onnx
 models/u2net.onnx
+models/
