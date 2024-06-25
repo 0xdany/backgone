@@ -303,3 +303,7 @@ cython_debug/
 .onnx
 models/u2net.onnx
 models/
+
+
+uploads/*
+processed/*
