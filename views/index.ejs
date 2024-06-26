@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BackGone</title>
+    <title>Backgone</title>
     <link href="/styles/output.css" rel="stylesheet" />
+    <link rel="icon" href="/assets/logo.svg" type="image/icon type" />
     <script src="/node_modules/htmx.org/dist/htmx.min.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -40,16 +41,26 @@
   </head>
 
   <body class="items-center justify-center bg-slate-900 font-manrope">
+    <h3 class="text-xs mt-4 text-neutral-600 font-mono text-center font-thin">&gt;&gt; (base) 0xdany backgone % docker-compose up</h3>
+
+
     <!-- CONVERSION PANEL -->
-    <div class="mt-10 flex items-center justify-center">
+    <div class="mt-4 flex items-center justify-center">
       <div
         class="py10md:py-20 w-11/12 rounded-3xl bg-sky-400 p-8 md:grid md:grid-cols-2"
       >
         <!-- LEFT -->
         <div class="grid place-items-center">
-          <div class="text-center md:text-left">
-            <h1 class="text-4xl font-bold md:text-5xl">Backgone</h1>
-            <h2 class="text-lg font-semibold md:text-2xl">
+          <div
+            class="space-y-1 text-center drop-shadow-2xl md:space-y-2 md:text-left"
+          >
+            <div class="flex flex-row gap-1">
+              <img src="/assets/logo.svg" alt="logo" class="w-8 md:w-10" />
+              <h1 class="text-4xl font-bold md:text-5xl">Backgone.</h1>
+            </div>
+            <h2
+              class="inline-block bg-gradient-to-r from-blue-700 from-0% via-indigo-500 via-60% to-emerald-900 to-100% bg-clip-text text-sm font-medium text-transparent md:text-lg"
+            >
               Remove everything but you!
             </h2>
           </div>
@@ -83,6 +94,31 @@
           </div>
         </div>
       </div>
+    </div>
+
+
+    <!-- DESCRIPTION -->
+    <div class="mt-10 text-center text-white">
+      <h1 class="text-xl sm:text-2xl">A quick note ⚡️ from me (the great).</h1>
+      <p class="mt-4 space-y-3 px-8 sm:text-lg md:px-10 lg:px-20">
+        With the power of magic. This mystical dockerized app will slice you out
+        of your place. A wicked mixture of the unholy
+        <span class="font-mono italic">htmx</span>, an
+        <span class="font-mono italic">express.js</span> - the object, and the
+        venomous <span class="font-mono italic">python3</span>. Nahh man, feel
+        free checkout my
+        <a href="https://github.com/0xdany" class="text-blue-600"> github 🔗</a>
+        and stare at it to death.
+      </p>
+
+      <p class="my-10 px-10">
+        To the future employers I’ve foreseen (with 100% accuracy), please hire
+        me. I’m a good guy
+        <span
+          class="text-slate-600 md:opacity-0 md:transition-opacity md:hover:opacity-100"
+          >(most of the time)</span
+        >!"
+      </p>
     </div>
 
     <script>
@@ -122,8 +158,8 @@
               formData.append("image", file);
               result.innerHTML = `
                 <div class="flex flex-col items-center">
-                  <div class="loader mb-2"></div>
-                  <span>Doing hard stuff 🤯...</span>
+                  <div class="loader mb-2 px-2"></div>
+                  <span>Doing some hard stuff 🤯...</span>
                 </div>
               `;
               fetch("/upload", {
