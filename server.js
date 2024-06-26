@@ -86,6 +86,6 @@ app.post("/upload", upload.single("image"), (req, res) => {
   });
 });
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

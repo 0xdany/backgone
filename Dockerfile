@@ -41,9 +41,14 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends nodejs && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+    
+# Create the directories for the processed images and uploads
+RUN mkdir -p /app/processed
+RUN mkdir -p /app/uploads
 
 # Create the directory for the model file
 RUN mkdir -p /root/.u2net
+
 
 # Download the model file
 RUN curl -L -o /root/.u2net/u2net.onnx https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net.onnx
