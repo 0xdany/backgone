@@ -1,5 +1,5 @@
 # Use a compatible base image
-FROM node:18-slim AS nodebuild
+FROM --platform=linux/amd64 node:18-slim AS nodebuild
 
 # Set the working directory
 WORKDIR /app
@@ -20,7 +20,7 @@ RUN npm run build:css
 RUN npm prune --production
 
 # Use a compatible base image for the final stage
-FROM python:3.11-slim
+FROM --platform=linux/amd64 python:3.11-slim
 
 # Set the working directory
 WORKDIR /app
