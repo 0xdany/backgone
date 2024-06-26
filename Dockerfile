@@ -48,8 +48,11 @@ RUN mkdir -p /root/.u2net
 # Download the model file
 RUN curl -L -o /root/.u2net/u2net.onnx https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net.onnx
 
+# Set environment variable for PORT
+ENV PORT=8080
+
 # Expose the port the app runs on
 EXPOSE 8080
 
 # Start the Node.js server
-CMD ["npm", "run", "dev"]
+CMD ["node", "server.js"]
