@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -6,118 +6,135 @@
     <title>BackGone</title>
     <link href="/styles/output.css" rel="stylesheet" />
     <script src="/node_modules/htmx.org/dist/htmx.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
-      .dropzone {
-        border: 2px dashed #ccc;
-        border-radius: 10px;
-        padding: 20px;
-        text-align: center;
-        cursor: pointer;
-      }
       .dropzone.dragover {
         border-color: #000;
       }
     </style>
   </head>
 
-  <body class="bg-gray-100 text-center">
-    <h1 class="text-4xl font-bold text-blue-600 mt-10">Remove everything but you!</h1>
+  <body class="items-center justify-center bg-blue-950 font-manrope">
+    <!-- CONVERSION PANEL -->
+    <div class="mt-10 flex items-center justify-center">
+      <div
+        class="py10md:py-20 w-11/12 rounded-3xl bg-sky-400 p-8 md:grid md:grid-cols-2"
+      >
+        <!-- LEFT -->
+        <div class="grid place-items-center">
+          <div class="text-center md:text-left">
+            <h1 class="text-4xl font-bold md:text-5xl">Backgone</h1>
+            <h2 class="text-lg font-semibold md:text-2xl">
+              Remove everything but you!
+            </h2>
+          </div>
+        </div>
+        <!-- RIGHT -->
+        <div>
+          <div class="flex justify-center pb-4">
+            <div
+              id="dropzone"
+              class="mt-10 flex aspect-square h-40 rotate-6 cursor-pointer items-center rounded-xl border-2 border-dashed border-slate-400 bg-white px-10 py-4 text-center text-xs shadow-xl hover:bg-slate-200 sm:h-56 sm:text-base"
+              hx-post="/upload"
+              hx-encoding="multipart/form-data"
+              hx-trigger="drop"
+              hx-target="#result"
+              hx-on="dragover: addClass('dragover'); dragleave: removeClass('dragover'); drop: validateAndUpload(event)"
+            >
+              Drag and drop an image here or click to upload
+              <input type="file" name="image" class="hidden" />
+            </div>
 
-    <div id="dropzone" class="dropzone mt-10" hx-post="/upload" hx-encoding="multipart/form-data" hx-trigger="drop" hx-target="#result">
-      Drag and drop an image here or click to upload
-      <input type="file" name="image" style="display: none" />
-    </div>
-
-    <div class="w-full flex justify-center items-center">
-      <div id="result" class="mt-10"></div>
+            <div
+              class="-ml-6 mt-28 flex aspect-square h-40 -rotate-6 justify-center rounded-xl border-2 border-dashed border-slate-400 bg-white shadow-xl sm:-ml-20 sm:mt-52 sm:h-56"
+            >
+              <div
+                id="result"
+                class="flex items-center justify-center text-center text-xs sm:text-base"
+              >
+                Waiting for you to drop something there &gt;-&lt;
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-      const dropzone = document.getElementById("dropzone");
-      const validateFile = (file) => {
-        const validTypes = ["image/jpeg"];
+      document.addEventListener("DOMContentLoaded", function () {
+        const dropzone = document.getElementById("dropzone");
+        const input = dropzone.querySelector('input[type="file"]');
+        const result = document.getElementById("result");
 
-        document.getElementById("dropzone").classList.remove("bg-red-200");
-        document.getElementById("dropzone").innerText = "Drag and drop an image here or click to upload";
+        dropzone.addEventListener("click", function () {
+          input.click();
+        });
 
-        if (!validTypes.includes(file.type)) {
-          document.getElementById("dropzone").classList.add("bg-red-200");
-          document.getElementById("dropzone").innerText = "Only .jpg and .jpeg files are allowed. Please try again dude XD";
-          return false;
+        input.addEventListener("change", function (event) {
+          handleFiles(event.target.files);
+        });
+
+        dropzone.addEventListener("dragover", function (event) {
+          event.preventDefault();
+          dropzone.classList.add("dragover");
+        });
+
+        dropzone.addEventListener("dragleave", function () {
+          dropzone.classList.remove("dragover");
+        });
+
+        dropzone.addEventListener("drop", function (event) {
+          event.preventDefault();
+          dropzone.classList.remove("dragover");
+          handleFiles(event.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+          if (files.length > 0) {
+            const file = files[0];
+            if (validateFile(file)) {
+              const formData = new FormData();
+              formData.append("image", file);
+              result.innerText = "Doing hard stuff 🤯...";
+              fetch("/upload", {
+                method: "POST",
+                body: formData,
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  result.innerHTML = `
+                    <a href="${data.imageUrl}" download="processed.png" class="h-full w-full flex justify-center hover:bg-slate-200">
+                      <img src="${data.imageUrl}" alt="Processed Image" class="h-full w-full object-contain flex justify-center">
+                    </a>`;
+                })
+                .catch((error) => {
+                  console.error("Error:", error);
+                  result.innerText =
+                    "Error processing image. Please try again 🤥";
+                });
+            }
+          }
         }
 
-        return true;
-      };
+        function validateFile(file) {
+          const validTypes = ["image/jpeg"];
+          dropzone.classList.remove("bg-red-200");
+          dropzone.innerText = "Drag and drop an image here or click to upload";
 
-      dropzone.addEventListener("click", function () {
-        this.querySelector('input[type="file"]').click();
-      });
-
-      dropzone.addEventListener("change", function (event) {
-        const fileInput = event.target;
-        const file = fileInput.files[0];
-
-        if (!validateFile(file)) return;
-
-        const formData = new FormData();
-        formData.append("image", file);
-
-        document.getElementById("result").innerHTML = "<p>Processing...</p>";
-
-        fetch("/upload", {
-          method: "POST",
-          body: formData,
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            document.getElementById("result").innerHTML = `
-              <img src="${data.imageUrl}" alt="Processed Image" class="max-h-80">
-              <br>
-              <a href="${data.imageUrl}" download="processed.png" class="mt-2 inline-block bg-blue-500 text-white px-4 py-2 rounded">Download</a>
-            `;
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-            document.getElementById("result").innerHTML = "<p>Error processing image. Please try again.</p>";
-          });
-      });
-
-      dropzone.addEventListener("dragover", function (event) {
-        event.preventDefault();
-        dropzone.classList.add("dragover");
-      });
-
-      dropzone.addEventListener("dragleave", function () {
-        dropzone.classList.remove("dragover");
-      });
-
-      dropzone.addEventListener("drop", function (event) {
-        event.preventDefault();
-        dropzone.classList.remove("dragover");
-        const files = event.dataTransfer.files;
-
-        if (files.length > 0 && validateFile(files[0])) {
-          const formData = new FormData();
-          formData.append("image", files[0]);
-
-          document.getElementById("result").innerHTML = "<p>Processing...</p>";
-
-          fetch("/upload", {
-            method: "POST",
-            body: formData,
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              document.getElementById("result").innerHTML = `
-                <img src="${data.imageUrl}" alt="Processed Image" class="max-h-80">
-                <br>
-                <a href="${data.imageUrl}" download="processed.png" class="mt-2 inline-block bg-blue-500 text-white px-4 py-2 rounded">Download</a>
-              `;
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-              document.getElementById("result").innerHTML = "<p>Error processing image. Please try again.</p>";
-            });
+          if (!validTypes.includes(file.type)) {
+            dropzone.classList.add("bg-red-200");
+            dropzone.innerText =
+              "Only .jpg and .jpeg files are allowed. How could you 🤬";
+            return false;
+          }
+          return true;
         }
       });
     </script>
