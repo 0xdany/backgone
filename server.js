@@ -5,7 +5,7 @@ const { spawn } = require("child_process");
 const fs = require("fs");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 8080;
 
 // Configure Multer for file uploads
 const upload = multer({
