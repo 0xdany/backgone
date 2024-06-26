@@ -18,6 +18,24 @@
       .dropzone.dragover {
         border-color: #000;
       }
+
+      .loader {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        animation: spin 2s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
     </style>
   </head>
 
@@ -102,7 +120,12 @@
             if (validateFile(file)) {
               const formData = new FormData();
               formData.append("image", file);
-              result.innerText = "Doing hard stuff 🤯...";
+              result.innerHTML = `
+                <div class="flex flex-col items-center">
+                  <div class="loader mb-2"></div>
+                  <span>Doing hard stuff 🤯...</span>
+                </div>
+              `;
               fetch("/upload", {
                 method: "POST",
                 body: formData,
