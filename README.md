@@ -56,7 +56,7 @@
 <code>BackGone provides a simple and intuitive interface for users to drag and drop or click to upload images. The dockerized application processes the images by removing the background and returns the processed image, which can be downloaded by the user.
 </code>
 
-### >> See the live instance [Backgone](https://backgone-v7odv27rhq-uw.a.run.app/) here (hosted on Cloud Run)
+### >> See the live instance [Backgone](https://backgone.danyraihan.dev/) here (hosted on Cloud Run)
 
 ---
 
